@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Bill Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c5530;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 4px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 12px;
+        }
+        .house-cell {
+            font-weight: bold;
+            background-color: #e8f5e8;
+        }
+        .total-row {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        .tokens-row {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+        .negative {
+            color: red;
+        }
+        .positive {
+            color: green;
+        }
+        .zero {
+            color: #666;
+        }
+        .info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .rate-info {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #2c5530;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Utility Bill Calculator</h1>
+        
+        <div class="info">
+            <strong>Instructions:</strong>
+            <ul>
+                <li>Enter the 1st reading and current reading for each house</li>
+                <li>Enter the amount paid by each house</li>
+                <li>Consumption = Current reading - 1st reading</li>
+                <li>Total bill = Consumption × 25 (rate per unit)</li>
+                <li>Balance = Total bill - Paid</li>
+            </ul>
+        </div>
+
+        <div class="rate-info">Rate: 25 per unit of consumption</div>
+
+        <table id="billTable">
+            <thead>
+                <tr>
+                    <th>Houses</th>
+                    <th>1st Reading</th>
+                    <th>Current Reading</th>
+                    <th>Consumption</th>
+                    <th>Total Bill</th>
+                    <th>Paid</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="house-cell">A1</td>
+                    <td><input type="number" step="0.1" value="204.9" onchange="calculateRow(this, 0)"></td>
+                    <td><input type="number" step="0.1" value="210.2" onchange="calculateRow(this, 0)"></td>
+                    <td id="consumption-0">5.3</td>
+                    <td id="total-0">132.5</td>
+                    <td><input type="number" step="0.1" value="500" onchange="calculateRow(this, 0)"></td>
+                    <td id="balance-0" class="positive">367.5</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">A2</td>
+                    <td><input type="number" step="0.1" value="169.3" onchange="calculateRow(this, 1)"></td>
+                    <td><input type="number" step="0.1" value="275.7" onchange="calculateRow(this, 1)"></td>
+                    <td id="consumption-1">106.4</td>
+                    <td id="total-1">2660.0</td>
+                    <td><input type="number" step="0.1" value="2918" onchange="calculateRow(this, 1)"></td>
+                    <td id="balance-1" class="positive">258.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">A3</td>
+                    <td><input type="number" step="0.1" value="366.7" onchange="calculateRow(this, 2)"></td>
+                    <td><input type="number" step="0.1" value="588.5" onchange="calculateRow(this, 2)"></td>
+                    <td id="consumption-2">221.8</td>
+                    <td id="total-2">5545.0</td>
+                    <td><input type="number" step="0.1" value="6028" onchange="calculateRow(this, 2)"></td>
+                    <td id="balance-2" class="positive">483.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">A4</td>
+                    <td><input type="number" step="0.1" value="121.9" onchange="calculateRow(this, 3)"></td>
+                    <td><input type="number" step="0.1" value="151.8" onchange="calculateRow(this, 3)"></td>
+                    <td id="consumption-3">29.9</td>
+                    <td id="total-3">747.5</td>
+                    <td><input type="number" step="0.1" value="800" onchange="calculateRow(this, 3)"></td>
+                    <td id="balance-3" class="positive">52.5</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">A5</td>
+                    <td><input type="number" step="0.1" value="282.6" onchange="calculateRow(this, 4)"></td>
+                    <td><input type="number" step="0.1" value="282.6" onchange="calculateRow(this, 4)"></td>
+                    <td id="consumption-4">0.0</td>
+                    <td id="total-4">0.0</td>
+                    <td><input type="number" step="0.1" value="0" onchange="calculateRow(this, 4)"></td>
+                    <td id="balance-4" class="zero">0.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">B1</td>
+                    <td><input type="number" step="0.1" value="566.5" onchange="calculateRow(this, 5)"></td>
+                    <td><input type="number" step="0.1" value="595.7" onchange="calculateRow(this, 5)"></td>
+                    <td id="consumption-5">29.2</td>
+                    <td id="total-5">730.0</td>
+                    <td><input type="number" step="0.1" value="790" onchange="calculateRow(this, 5)"></td>
+                    <td id="balance-5" class="positive">60.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">B2</td>
+                    <td><input type="number" step="0.1" value="149.6" onchange="calculateRow(this, 6)"></td>
+                    <td><input type="number" step="0.1" value="156.8" onchange="calculateRow(this, 6)"></td>
+                    <td id="consumption-6">7.2</td>
+                    <td id="total-6">180.0</td>
+                    <td><input type="number" step="0.1" value="150" onchange="calculateRow(this, 6)"></td>
+                    <td id="balance-6" class="negative">-30.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">B3</td>
+                    <td><input type="number" step="0.1" value="152.2" onchange="calculateRow(this, 7)"></td>
+                    <td><input type="number" step="0.1" value="164.6" onchange="calculateRow(this, 7)"></td>
+                    <td id="consumption-7">12.4</td>
+                    <td id="total-7">310.0</td>
+                    <td><input type="number" step="0.1" value="150" onchange="calculateRow(this, 7)"></td>
+                    <td id="balance-7" class="negative">-160.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">B4</td>
+                    <td><input type="number" step="0.1" value="384.6" onchange="calculateRow(this, 8)"></td>
+                    <td><input type="number" step="0.1" value="677.2" onchange="calculateRow(this, 8)"></td>
+                    <td id="consumption-8">292.6</td>
+                    <td id="total-8">7315.0</td>
+                    <td><input type="number" step="0.1" value="8803" onchange="calculateRow(this, 8)"></td>
+                    <td id="balance-8" class="positive">1488.0</td>
+                </tr>
+                <tr>
+                    <td class="house-cell">B5</td>
+                    <td><input type="number" step="0.1" value="207.4" onchange="calculateRow(this, 9)"></td>
+                    <td><input type="number" step="0.1" value="271.7" onchange="calculateRow(this, 9)"></td>
+                    <td id="consumption-9">64.3</td>
+                    <td id="total-9">1607.5</td>
+                    <td><input type="number" step="0.1" value="1828" onchange="calculateRow(this, 9)"></td>
+                    <td id="balance-9" class="positive">220.5</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="total-row">
+                    <td><strong>Total</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="total-balance"><strong>2739.5</strong></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="tokens-row">
+                    <td><strong>No of tokens</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td id="tokens"><strong>109.58</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function calculateRow(element, rowIndex) {
+            const row = element.closest('tr');
+            const inputs = row.querySelectorAll('input[type="number"]');
+            
+            const firstReading = parseFloat(inputs[0].value) || 0;
+            const currentReading = parseFloat(inputs[1].value) || 0;
+            const paid = parseFloat(inputs[2].value) || 0;
+            
+            // Calculate consumption
+            const consumption = currentReading - firstReading;
+            document.getElementById(`consumption-${rowIndex}`).textContent = consumption.toFixed(1);
+            
+            // Calculate total bill (consumption * 25)
+            const totalBill = consumption * 25;
+            document.getElementById(`total-${rowIndex}`).textContent = totalBill.toFixed(1);
+            
+            // Calculate balance (total bill - paid)
+            const balance = totalBill - paid;
+            const balanceElement = document.getElementById(`balance-${rowIndex}`);
+            balanceElement.textContent = balance.toFixed(1);
+            
+            // Set color based on balance
+            balanceElement.className = '';
+            if (balance > 0) {
+                balanceElement.className = 'positive';
+            } else if (balance < 0) {
+                balanceElement.className = 'negative';
+            } else {
+                balanceElement.className = 'zero';
+            }
+            
+            updateTotals();
+        }
+        
+        function updateTotals() {
+            let totalBalance = 0;
+            
+            // Calculate total balance
+            for (let i = 0; i < 10; i++) {
+                const balanceText = document.getElementById(`balance-${i}`).textContent;
+                const balance = parseFloat(balanceText) || 0;
+                totalBalance += balance;
+            }
+            
+            document.getElementById('total-balance').innerHTML = `<strong>${totalBalance.toFixed(1)}</strong>`;
+            
+            // Calculate tokens (total balance / 25)
+            const tokens = totalBalance / 25;
+            document.getElementById('tokens').innerHTML = `<strong>${tokens.toFixed(2)}</strong>`;
+        }
+        
+        // Initialize calculations on page load
+        window.onload = function() {
+            for (let i = 0; i < 10; i++) {
+                const row = document.querySelector(`#consumption-${i}`).closest('tr');
+                const firstInput = row.querySelector('input[type="number"]');
+                calculateRow(firstInput, i);
+            }
+        };
+    </script>
+</body>
+</html>
